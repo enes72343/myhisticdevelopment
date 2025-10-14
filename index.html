@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myhistic Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="image/bot.ico" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #5865F2;
+            --primary-dark: #4752C4;
+            --secondary: #57F287;
+            --accent: #FEE75C;
+            --danger: #ED4245;
+            --dark: #000000;
+            --darker: #000000;
+            --darkest: #000000;
+            --light: #FFFFFF;
+            --gray: #666666;
+            --gray-light: #888888;
+            --card-bg: rgba(0, 0, 0, 0.8);
+            --glass: rgba(255, 255, 255, 0.1);
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-dark: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+        }
+
+        body {
+            background: var(--darkest);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .stars-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, white, transparent);
+            animation: shoot linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(-100px) translateY(0px) rotate(45deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            20% {
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(2000px) translateY(1000px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* LANGUAGE SWITCHER */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        .lang-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass);
+            z-index: 1000;
+            padding: 1.2rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--light);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient);
+        }
+
+        .nav-cta {
+            background: var(--gradient);
+            color: var(--light);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.3);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 0 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(88, 101, 242, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(88, 101, 242, 0.2);
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--light) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-height: 54px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button.primary {
+            background: var(--gradient);
+            color: var(--light);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.3);
+        }
+
+        .cta-button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(88, 101, 242, 0.4);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid var(--glass);
+        }
+
+        .cta-button.secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(88, 101, 242, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* DEVELOPERS SECTION */
+        .developers-section {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6rem 0 !important;
+        }
+
+        .developers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .developer-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .developer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .developer-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(88, 101, 242, 0.15);
+        }
+
+        .developer-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .developer-avatar {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .developer-info {
+            flex: 1;
+        }
+
+        .developer-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+
+        .developer-discord {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .developer-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-tag {
+            background: rgba(88, 101, 242, 0.15);
+            color: var(--primary);
+            padding: 0.5rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(88, 101, 242, 0.3);
+        }
+
+        .developer-description {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            flex: 1;
+        }
+
+        .developer-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .developer-exp {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .add-friend-btn {
+            background: var(--gradient);
+            color: var(--light);
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            min-height: 40px;
+            text-decoration: none;
+        }
+
+        .add-friend-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(88, 101, 242, 0.3);
+        }
+
+        /* SERVICES SECTION */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(88, 101, 242, 0.15);
+        }
+
+        .service-card.featured {
+            border: 2px solid var(--accent);
+            transform: scale(1.05);
+        }
+
+        .service-card.featured::before {
+            background: var(--accent);
+        }
+
+        .service-card.featured:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(88, 101, 242, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .service-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 1rem;
+        }
+
+        .service-description {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .service-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .service-features li {
+            padding: 0.5rem 0;
+            color: var(--gray);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .service-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient);
+            color: var(--light);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 50px;
+            text-decoration: none;
+            margin-top: auto;
+        }
+
+        .order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 101, 242, 0.3);
+        }
+
+        /* ORDER MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .order-form {
+            background: var(--card-bg);
+            border: 1px solid var(--glass);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--danger);
+        }
+
+        .form-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--light);
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.1);
+        }
+
+        .form-select option {
+            background: var(--dark);
+            color: var(--light);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--gradient);
+            color: var(--light);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 50px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(88, 101, 242, 0.3);
+        }
+
+        .discord-join {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass);
+        }
+
+        .discord-btn {
+            background: var(--primary);
+            color: var(--light);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            min-height: 44px;
+        }
+
+        .discord-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 3rem 0 2rem;
+            border-top: 1px solid var(--glass);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand .logo {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-description {
+            color: var(--gray);
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .social-link {
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            color: var(--light);
+            transform: translateY(-2px);
+        }
+
+        .footer-heading {
+            color: var(--light);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass);
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+
+        /* FIXED BUTTON STYLES */
+        .fixed-buttons {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .fixed-discord-btn {
+            background: var(--primary);
+            color: var(--light);
+            padding: 1rem;
+            border-radius: 50%;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0 4px 20px rgba(88, 101, 242, 0.4);
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .fixed-discord-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .services-grid,
+            .developers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-card.featured {
+                transform: none;
+            }
+            
+            .service-card.featured:hover {
+                transform: translateY(-8px);
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .cta-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .developer-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .order-form {
+                padding: 1.5rem;
+                max-width: 95%;
+            }
+
+            .fixed-buttons {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .fixed-discord-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .hero {
+                padding: 6rem 0 2rem;
+            }
+            
+            .section {
+                padding: 4rem 0;
+            }
+            
+            .service-card,
+            .developer-card {
+                padding: 1.5rem;
+            }
+            
+            .developer-header {
+                gap: 1rem;
+            }
+            
+            .developer-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars-background" id="starsBackground"></div>
+
+    
+    <div class="fixed-buttons">
+        <a href="https://discord.gg/QC7J37ZmyB" class="fixed-discord-btn" target="_blank">
+            <i class="fab fa-discord"></i>
+        </a>
+    </div>
+
+    
+    <div class="language-switcher">
+        <button class="lang-btn active" data-lang="tr">TR</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <span data-tr="Myhistic Bot" data-en="Myhistic Bot">Myhistic Bot</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#services" class="active">
+                        <span data-tr="Discord Bot Paketleri" data-en="Discord Bot Packages">Discord Bot Paketleri</span>
+                    </a>
+                    <a href="#developers">
+                        <span data-tr="Geliştiriciler" data-en="Developers">Geliştiriciler</span>
+                    </a>
+                    <a href="#support">
+                        <span data-tr="Destek" data-en="Support">Destek</span>
+                    </a>
+                </div>
+                <a href="#order" class="nav-cta">
+                    <i class="fas fa-bolt"></i>
+                    <span data-tr="Hemen Başla" data-en="Get Started">Hemen Başla</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-crown"></i>
+                    <span data-tr="Premium Hizmetlerle Discord Bot Geliştirme" data-en="Premium Discord Bot Development">Premium Hizmetlerle Discord Bot Geliştirme</span>
+                </div>
+                <h1 data-tr="Discord Sunucunuzu Profesyonel Seviyeye Taşıyın" data-en="Take Your Discord Server to Professional Level">Discord Sunucunuzu<br>Profesyonel Seviyeye Taşıyın</h1>
+                <p data-tr="Ticket Botu, Moderasyon Botu, Oyun Entegreli Bot ve daha fazlası! Myhistic Bot ile sunucunuzu güçlendirin." data-en="Ticket Bot, Moderation Bot, Game Integrated Bot and more! Empower your server with Myhistic Bot.">Ticket Botu, Moderasyon Botu, Oyun Entegreli Bot ve daha fazlası! Myhistic Bot ile sunucunuzu güçlendirin.</p>
+                <div class="cta-buttons">
+                    <a href="#services" class="cta-button primary">
+                        <i class="fas fa-rocket"></i>
+                        <span data-tr="Paketleri Gör" data-en="View Packages">Paketleri Gör</span>
+                    </a>
+                    <a href="https://discord.gg/QC7J37ZmyB" class="cta-button secondary" target="_blank">
+                        <i class="fab fa-discord"></i>
+                        <span data-tr="Discord Sunucusu" data-en="Discord Server">Discord Sunucusu</span>
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">150+</div>
+                        <div class="stat-label" data-tr="Mutlu Müşteri" data-en="Happy Clients">Mutlu Müşteri</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">300+</div>
+                        <div class="stat-label" data-tr="Geliştirilen Bot" data-en="Bots Developed">Geliştirilen Bot</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label" data-tr="Destek" data-en="Support">Destek</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge" data-tr="Discord Bot Paketleri" data-en="Discord Bot Packages">Discord Bot Paketleri</div>
+                <h2 class="section-title" data-tr="Özel Çözümleriniz" data-en="Your Custom Solutions">Özel Çözümleriniz</h2>
+                <p class="section-subtitle" data-tr="Ticket Botu, Genel Moderasyon Botu, Oyun Entegreli Bot ve daha fazlası" data-en="Ticket Bot, General Moderation Bot, Game Integrated Bot and more">Ticket Botu, Genel Moderasyon Botu, Oyun Entegreli Bot ve daha fazlası</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3 class="service-name" data-tr="Ticket Botu" data-en="Ticket Bot">Ticket Botu</h3>
+                    <p class="service-description" data-tr="Profesyonel destek sistemi ile özelleştirilebilir ticket botu" data-en="Customizable ticket bot with professional support system">Profesyonel destek sistemi ile özelleştirilebilir ticket botu</p>
+                    <div class="service-price">$49</div>
+                    <ul class="service-features">
+                        <li data-tr="Özel Ticket Kanalı" data-en="Private Ticket Channel">Özel Ticket Kanalı</li>
+                        <li data-tr="Rol Yönetimi" data-en="Role Management">Rol Yönetimi</li>
+                        <li data-tr="Otomatik Kapatma" data-en="Auto Close">Otomatik Kapatma</li>
+                        <li data-tr="Transcript Kaydı" data-en="Transcript Recording">Transcript Kaydı</li>
+                        <li data-tr="7/24 Destek" data-en="24/7 Support">7/24 Destek</li>
+                    </ul>
+                    <button class="order-btn" data-package="Ticket Botu" data-price="$49" data-tr="Satın Al" data-en="Buy Now">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span data-tr="Satın Al" data-en="Buy Now">Satın Al</span>
+                    </button>
+                </div>
+
+                <div class="service-card featured">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="service-name" data-tr="Moderasyon Botu" data-en="Moderation Bot">Moderasyon Botu</h3>
+                    <p class="service-description" data-tr="Gelişmiş moderasyon araçları ile güvenli sunucu yönetimi" data-en="Secure server management with advanced moderation tools">Gelişmiş moderasyon araçları ile güvenli sunucu yönetimi</p>
+                    <div class="service-price">$79</div>
+                    <ul class="service-features">
+                        <li data-tr="Otomatik Moderasyon" data-en="Auto Moderation">Otomatik Moderasyon</li>
+                        <li data-tr="Log Sistemi" data-en="Log System">Log Sistemi</li>
+                        <li data-tr="Rol Yönetimi" data-en="Role Management">Rol Yönetimi</li>
+                        <li data-tr="Filtre Sistemi" data-en="Filter System">Filtre Sistemi</li>
+                        <li data-tr="Özel Komutlar" data-en="Custom Commands">Özel Komutlar</li>
+                        <li data-tr="Öncelikli Destek" data-en="Priority Support">Öncelikli Destek</li>
+                    </ul>
+                    <button class="order-btn" data-package="Moderasyon Botu" data-price="$79" data-tr="Satın Al" data-en="Buy Now">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span data-tr="Satın Al" data-en="Buy Now">Satın Al</span>
+                    </button>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3 class="service-name" data-tr="MTA Botu" data-en="MTA Bot">MTA Botu</h3>
+                    <p class="service-description" data-tr="MTA sunucunuz için özel entegrasyon ve yönetim botu" data-en="Special integration and management bot for your MTA server">MTA sunucunuz için özel entegrasyon ve yönetim botu</p>
+                    <div class="service-price">$99</div>
+                    <ul class="service-features">
+                        <li data-tr="MTA Server Entegrasyonu" data-en="MTA Server Integration">MTA Server Entegrasyonu</li>
+                        <li data-tr="Oyuncu Yönetimi" data-en="Player Management">Oyuncu Yönetimi</li>
+                        <li data-tr="İstatistik Sistemi" data-en="Statistics System">İstatistik Sistemi</li>
+                        <li data-tr="Özel Komutlar" data-en="Custom Commands">Özel Komutlar</li>
+                        <li data-tr="API Bağlantısı" data-en="API Connection">API Bağlantısı</li>
+                        <li data-tr="7/24 Premium Destek" data-en="24/7 Premium Support">7/24 Premium Destek</li>
+                    </ul>
+                    <button class="order-btn" data-package="MTA Botu" data-price="$99" data-tr="Satın Al" data-en="Buy Now">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span data-tr="Satın Al" data-en="Buy Now">Satın Al</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="developers" class="section developers-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge" data-tr="Ekibimiz" data-en="Our Team">Ekibimiz</div>
+                <h2 class="section-title" data-tr="Geliştiricilerimiz" data-en="Our Developers">Geliştiricilerimiz</h2>
+                <p class="section-subtitle" data-tr="Deneyimli geliştirici ekibimizle tanışın" data-en="Meet our experienced developer team">Deneyimli geliştirici ekibimizle tanışın</p>
+            </div>
+            <div class="developers-grid">
+                <div class="developer-card">
+                    <div class="developer-header">
+                        <div class="developer-avatar">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="developer-info">
+                            <div class="developer-name" data-tr="Feyord" data-en="Feyord">Feyord</div>
+                            <div class="developer-discord">infinitethegrateone</div>
+                        </div>
+                    </div>
+                    <div class="developer-skills">
+                        <span class="skill-tag">Html</span>
+                        <span class="skill-tag">Css</span>
+                        <span class="skill-tag">javaScript</span>
+                        <span class="skill-tag">Mysql</span>
+                    </div>
+                    <p class="developer-description" data-tr="3 yıllık Web Sitesi geliştirme deneyimine sahip, 100'den fazla web projesi tamamladı. Modern teknolojileri kullanarak ölçeklenebilir çözümler geliştiriyor." data-en="3 years of Web development experience, completed over 100 web projects. Develops scalable solutions using modern technologies.">3 yıllık Web sitesi geliştirme deneyimine sahip, 100'den fazla web projesi tamamladı. Modern teknolojileri kullanarak ölçeklenebilir çözümler geliştiriyor.</p>
+                    <div class="developer-footer">
+                        <div class="developer-exp">
+                            <i class="fas fa-star"></i>
+                            <span data-tr="3 Yıl Deneyim" data-en="3 Years Experience">3 Yıl Deneyim</span>
+                        </div>
+                        <a href="https://discord.com/channels/@me" class="add-friend-btn" target="_blank">
+                            <i class="fab fa-discord"></i>
+                            <span data-tr="Arkadaş Ekle" data-en="Add Friend">Arkadaş Ekle</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="developer-card">
+                    <div class="developer-header">
+                        <div class="developer-avatar">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <div class="developer-info">
+                            <div class="developer-name" data-tr="Myrees" data-en="Myrees">Myrees</div>
+                            <div class="developer-discord">myreesreal</div>
+                        </div>
+                    </div>
+                    <div class="developer-skills">
+                        <span class="skill-tag">C++</span>
+                        <span class="skill-tag">Mta</span>
+                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag">API</span>
+                        <span class="skill-tag">FastAPI</span>
+                    </div>
+                    <p class="developer-description" data-tr="Oyun entegrasyonu ve API bağlantılı botlarda uzman, hızlı ve temiz kod yazımı. Backend sistemleri ve veritabanı yönetimi konusunda deneyimli." data-en="Expert in game integration and API-connected bots, fast and clean coding. Experienced in backend systems and database management.">Oyun entegrasyonu ve API bağlantılı botlarda uzman, hızlı ve temiz kod yazımı. Backend sistemleri ve veritabanı yönetimi konusunda deneyimli.</p>
+                    <div class="developer-footer">
+                        <div class="developer-exp">
+                            <i class="fas fa-star"></i>
+                            <span data-tr="4 Yıl Deneyim" data-en="2 Years Experience">2 Yıl Deneyim</span>
+                        </div>
+                        <a href="https://discord.com/channels/@me" class="add-friend-btn" target="_blank">
+                            <i class="fab fa-discord"></i>
+                            <span data-tr="Arkadaş Ekle" data-en="Add Friend">Arkadaş Ekle</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="developer-card">
+                    <div class="developer-header">
+                        <div class="developer-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="developer-info">
+                            <div class="developer-name" data-tr="Carver" data-en="Carver">Carver</div>
+                            <div class="developer-discord">carvertxn</div>
+                        </div>
+                    </div>
+                    <div class="developer-skills">
+                        <span class="skill-tag">TypeScript/JavaScript</span>
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Discord.js</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">Docker</span>
+                    </div>
+                    <p class="developer-description" data-tr="Modern teknolojileri kullanarak ölçeklenebilir bot çözümleri geliştirme konusunda uzman. Full-stack geliştirme ve containerization konularında deneyimli." data-en="Expert in developing scalable bot solutions using modern technologies. Experienced in full-stack development and containerization.">Modern teknolojileri kullanarak ölçeklenebilir bot çözümleri geliştirme konusunda uzman. Full-stack geliştirme ve containerization konularında deneyimli.</p>
+                    <div class="developer-footer">
+                        <div class="developer-exp">
+                            <i class="fas fa-star"></i>
+                            <span data-tr="4 Yıl Deneyim" data-en="4 Years Experience">4 Yıl Deneyim</span>
+                        </div>
+                        <a href="https://discord.com/channels/@me" class="add-friend-btn" target="_blank">
+                            <i class="fab fa-discord"></i>
+                            <span data-tr="Arkadaş Ekle" data-en="Add Friend">Arkadaş Ekle</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="support" class="section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge" data-tr="Destek" data-en="Support">Destek</div>
+                <h2 class="section-title" data-tr="Yardıma mı ihtiyacınız var?" data-en="Need Help?">Yardıma mı ihtiyacınız var?</h2>
+                <p class="section-subtitle" data-tr="7/24 aktif destek ekibimiz her zaman yanınızda" data-en="Our 24/7 active support team is always with you">7/24 aktif destek ekibimiz her zaman yanınızda</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="service-name" data-tr="Canlı Destek" data-en="Live Support">Canlı Destek</h3>
+                    <p class="service-description" data-tr="Discord sunucumuz üzerinden 7/24 canlı destek hizmeti" data-en="24/7 live support service via our Discord server">Discord sunucumuz üzerinden 7/24 canlı destek hizmeti</p>
+                    <a href="https://discord.gg/QC7J37ZmyB" class="order-btn" target="_blank">
+                        <i class="fab fa-discord"></i>
+                        <span data-tr="Discord'a Katıl" data-en="Join Discord">Discord'a Katıl</span>
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3 class="service-name" data-tr="Ticket Sistemi" data-en="Ticket System">Ticket Sistemi</h3>
+                    <p class="service-description" data-tr="Özel talepleriniz için ticket sistemi üzerinden destek" data-en="Support via ticket system for your special requests">Özel talepleriniz için ticket sistemi üzerinden destek</p>
+                    <a href="https://discord.gg/QC7J37ZmyB" class="order-btn" target="_blank">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span data-tr="Ticket Aç" data-en="Open Ticket">Ticket Aç</span>
+                    </a>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="service-name" data-tr="Danışmanlık" data-en="Consultancy">Danışmanlık</h3>
+                    <p class="service-description" data-tr="Bot projeniz için ücretsiz danışmanlık ve planlama hizmeti" data-en="Free consultancy and planning service for your bot project">Bot projeniz için ücretsiz danışmanlık ve planlama hizmeti</p>
+                    <button class="order-btn" data-package="Danışmanlık" data-price="Ücretsiz" data-tr="Danışmanlık Al" data-en="Get Consultancy">
+                        <i class="fas fa-comments"></i>
+                        <span data-tr="Danışmanlık Al" data-en="Get Consultancy">Danışmanlık Al</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <div class="modal" id="orderModal">
+        <div class="order-form">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h3 class="form-title" data-tr="Sipariş Formu" data-en="Order Form">Sipariş Formu</h3>
+            <p class="form-subtitle" data-tr="Aşağıdaki formu doldurarak siparişinizi oluşturun" data-en="Fill out the form below to create your order">Aşağıdaki formu doldurarak siparişinizi oluşturun</p>
+            
+            <form id="orderForm">
+                <div class="form-group">
+                    <label class="form-label" data-tr="Discord Kullanıcı Adı" data-en="Discord Username">Discord Kullanıcı Adı</label>
+                    <input type="text" class="form-input" id="discordUsername" placeholder="kullanici#1234" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" data-tr="Paket Seçimi" data-en="Package Selection">Paket Seçimi</label>
+                    <select class="form-select" id="packageSelect" required>
+                        <option value="" data-tr="Paket Seçiniz" data-en="Select Package">Paket Seçiniz</option>
+                        <option value="Ticket Botu" data-tr="Ticket Botu - $49" data-en="Ticket Bot - $49">Ticket Botu - $49</option>
+                        <option value="Moderasyon Botu" data-tr="Moderasyon Botu - $79" data-en="Moderation Bot - $79">Moderasyon Botu - $79</option>
+                        <option value="MTA Botu" data-tr="MTA Botu - $99" data-en="MTA Bot - $99">MTA Botu - $99</option>
+                        <option value="Danışmanlık" data-tr="Danışmanlık - Ücretsiz" data-en="Consultancy - Free">Danışmanlık - Ücretsiz</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" data-tr="Özel İstekler (Opsiyonel)" data-en="Special Requests (Optional)">Özel İstekler (Opsiyonel)</label>
+                    <textarea class="form-textarea" id="specialRequests" rows="3" placeholder="Botunuzda olmasını istediğiniz özellikleri belirtin..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitOrder">
+                    <i class="fas fa-paper-plane"></i>
+                    <span data-tr="Siparişi Gönder" data-en="Send Order">Siparişi Gönder</span>
+                </button>
+            </form>
+            
+            <div class="discord-join">
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--gray);" data-tr="Sipariş sonrası Discord sunucumuza katılmayı unutmayın!" data-en="Don't forget to join our Discord server after ordering!">Sipariş sonrası Discord sunucumuza katılmayı unutmayın!</p>
+                <a href="https://discord.gg/QC7J37ZmyB" class="discord-btn" target="_blank">
+                    <i class="fab fa-discord"></i>
+                    <span data-tr="Discord'a Katıl" data-en="Join Discord">Discord'a Katıl</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <span>Myhistic Bot</span>
+                    </a>
+                    <p class="footer-description" data-tr="Premium Discord bot geliştirme hizmeti sunuyoruz. Sunucunuzu bir üst seviyeye taşıyın." data-en="We provide premium Discord bot development services. Take your server to the next level.">Premium Discord bot geliştirme hizmeti sunuyoruz. Sunucunuzu bir üst seviyeye taşıyın.</p>
+                    <div class="social-links">
+                        <a href="https://discord.gg/QC7J37ZmyB" class="social-link" target="_blank">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links-group">
+                    <h4 class="footer-heading" data-tr="Hizmetler" data-en="Services">Hizmetler</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services" data-tr="Ticket Botu" data-en="Ticket Bot">Ticket Botu</a></li>
+                        <li><a href="#services" data-tr="Moderasyon Botu" data-en="Moderation Bot">Moderasyon Botu</a></li>
+                        <li><a href="#services" data-tr="MTA Botu" data-en="MTA Bot">MTA Botu</a></li>
+                        <li><a href="#services" data-tr="Özel Bot Geliştirme" data-en="Custom Bot Development">Özel Bot Geliştirme</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links-group">
+                    <h4 class="footer-heading" data-tr="Hızlı Bağlantılar" data-en="Quick Links">Hızlı Bağlantılar</h4>
+                    <ul class="footer-links">
+                        <li><a href="#developers" data-tr="Geliştiriciler" data-en="Developers">Geliştiriciler</a></li>
+                        <li><a href="#support" data-tr="Destek" data-en="Support">Destek</a></li>
+                        <li><a href="#order" data-tr="Sipariş Ver" data-en="Place Order">Sipariş Ver</a></li>
+                        <li><a href="#" data-tr="SSS" data-en="FAQ">SSS</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links-group">
+                    <h4 class="footer-heading" data-tr="İletişim" data-en="Contact">İletişim</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://discord.gg/QC7J37ZmyB" target="_blank" data-tr="Discord Sunucusu" data-en="Discord Server">Discord Sunucusu</a></li>
+                        <li><a href="mailto:info@myhistic.com" data-tr="E-posta" data-en="Email">info@myhistic.com</a></li>
+                        <li><a href="#" data-tr="İş Birlikleri" data-en="Partnerships">İş Birlikleri</a></li>
+                        <li><a href="#" data-tr="Kariyer" data-en="Career">Kariyer</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Myhistic Bot. <span data-tr="Tüm hakları saklıdır." data-en="All rights reserved.">Tüm hakları saklıdır.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        
+        const DISCORD_WEBHOOK_URL = 'webhookgir';
+
+        
+        function createStars() {
+            const starsContainer = document.getElementById('starsBackground');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                const size = Math.random() * 3;
+                const starType = size < 1 ? 'small' : size < 2 ? 'medium' : 'large';
+                
+                star.classList.add('star', starType);
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDuration = `${5 + Math.random() * 10}s`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                starsContainer.appendChild(star);
+            }
+            
+            
+            setInterval(() => {
+                const shootingStar = document.createElement('div');
+                shootingStar.classList.add('shooting-star');
+                shootingStar.style.left = `${Math.random() * 20}%`;
+                shootingStar.style.top = `${Math.random() * 20}%`;
+                shootingStar.style.animationDuration = `${2 + Math.random() * 3}s`;
+                
+                starsContainer.appendChild(shootingStar);
+                
+                setTimeout(() => {
+                    shootingStar.remove();
+                }, 5000);
+            }, 3000);
+        }
+
+        
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '0.8rem 0';
+                navbar.style.background = 'rgba(0, 0, 0, 0.98)';
+            } else {
+                navbar.style.padding = '1.2rem 0';
+                navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+            }
+        });
+
+        
+        const orderButtons = document.querySelectorAll('.order-btn, .nav-cta');
+        const orderModal = document.getElementById('orderModal');
+        const closeModal = document.getElementById('closeModal');
+        const packageSelect = document.getElementById('packageSelect');
+        const orderForm = document.getElementById('orderForm');
+        const submitOrderBtn = document.getElementById('submitOrder');
+
+        orderButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (button.hasAttribute('data-package')) {
+                    const package = button.getAttribute('data-package');
+                    const price = button.getAttribute('data-price');
+                    
+                    
+                    for (let i = 0; i < packageSelect.options.length; i++) {
+                        if (packageSelect.options[i].value === package) {
+                            packageSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+                
+                orderModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        closeModal.addEventListener('click', () => {
+            orderModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        orderModal.addEventListener('click', (e) => {
+            if (e.target === orderModal) {
+                orderModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        
+        async function sendToDiscordWebhook(formData) {
+            try {
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: "!! Yeni Sipariş!",
+                            color: 0x5865F2,
+                            fields: [
+                                {
+                                    name: "👤 Discord Kullanıcısı",
+                                    value: formData.discordUsername,
+                                    inline: true
+                                },
+                                {
+                                    name: "📦 Paket",
+                                    value: formData.package,
+                                    inline: true
+                                },
+                                {
+                                    name: "💎 Özel İstekler",
+                                    value: formData.specialRequests || "Belirtilmemiş",
+                                    inline: false
+                                },
+                                {
+                                    name: "🌐 Dil",
+                                    value: document.documentElement.lang === 'tr' ? "Türkçe" : "English",
+                                    inline: true
+                                },
+                                {
+                                    name: "🕒 Tarih",
+                                    value: new Date().toLocaleString('tr-TR'),
+                                    inline: true
+                                }
+                            ],
+                            timestamp: new Date().toISOString(),
+                            footer: {
+                                text: "Myhistic Bot Sipariş Sistemi"
+                            }
+                        }]
+                    }),
+                });
+
+                return response.ok;
+            } catch (error) {
+                console.error('Webhook gönderim hatası:', error);
+                return false;
+            }
+        }
+
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                discordUsername: document.getElementById('discordUsername').value,
+                package: packageSelect.options[packageSelect.selectedIndex].text,
+                specialRequests: document.getElementById('specialRequests').value
+            };
+
+            
+            const originalText = submitOrderBtn.innerHTML;
+            submitOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span data-tr="Gönderiliyor..." data-en="Sending...">Gönderiliyor...</span>';
+            submitOrderBtn.disabled = true;
+
+            // dc webhook at
+            const success = await sendToDiscordWebhook(formData);
+
+            if (success) {
+                alert(document.documentElement.lang === 'tr' 
+                    ? 'Siparişiniz başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.' 
+                    : 'Your order has been sent successfully! We will contact you as soon as possible.');
+            } else {
+                alert(document.documentElement.lang === 'tr' 
+                    ? 'Siparişiniz gönderilirken bir hata oluştu. Lütfen Discord üzerinden bizimle iletişime geçin.' 
+                    : 'An error occurred while sending your order. Please contact us via Discord.');
+            }
+
+            // butonu eski haline getir v1
+            submitOrderBtn.innerHTML = originalText;
+            submitOrderBtn.disabled = false;
+
+            orderModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            orderForm.reset();
+        });
+
+        
+        const langButtons = document.querySelectorAll('.lang-btn');
+        
+        langButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const lang = button.getAttribute('data-lang');
+                
+                
+                langButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                
+                document.documentElement.lang = lang;
+                
+                
+                document.querySelectorAll('[data-tr]').forEach(element => {
+                    if (lang === 'tr') {
+                        element.textContent = element.getAttribute('data-tr');
+                    } else if (lang === 'en') {
+                        element.textContent = element.getAttribute('data-en');
+                    }
+                });
+                
+                
+                document.querySelectorAll('.form-input[placeholder], .form-textarea[placeholder]').forEach(input => {
+                    if (input.placeholder.includes('kullanici#1234')) {
+                        input.placeholder = lang === 'tr' ? 'kullanici#1234' : 'username#1234';
+                    } else if (input.placeholder.includes('Botunuzda')) {
+                        input.placeholder = lang === 'tr' 
+                            ? 'Botunuzda olmasını istediğiniz özellikleri belirtin...' 
+                            : 'Specify the features you want in your bot...';
+                    }
+                });
+            });
+        });
+
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+        });
+    </script>
+</body>
+</html>
