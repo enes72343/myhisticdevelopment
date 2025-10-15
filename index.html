@@ -1661,329 +1661,339 @@
     </footer>
 
     <script>
-        // Discord OAuth2 Configuration
-        const DISCORD_CLIENT_ID = '1427790389603074078'; // Discord Developer Portal'dan alınacak
-        const DISCORD_REDIRECT_URI = 'https://myhisticdevelopment.vercel.app/callback.html'; // Discord Developer Portal'da kayıtlı redirect URI
-        const DISCORD_SCOPE = 'identify email';
+    // Discord OAuth2 Configuration
+    const DISCORD_CLIENT_ID = '1427790389603074078';
+    const DISCORD_REDIRECT_URI = 'https://myhisticdevelopment.vercel.app/callback.html';
+    const DISCORD_SCOPE = 'identify email';
+    
+    // Discord OAuth2 URL
+    const DISCORD_OAUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=${DISCORD_SCOPE}`;
+
+    // Webhook URL (siparişler için)
+    const DISCORD_WEBHOOK_URL = 'webhookgir';
+
+    // Create stars background
+    function createStars() {
+        const starsContainer = document.getElementById('starsBackground');
+        const starCount = 150;
         
-        // Discord OAuth2 URL
-        const DISCORD_OAUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=${DISCORD_SCOPE}`;
-
-        // Webhook URL (siparişler için)
-        const DISCORD_WEBHOOK_URL = 'webhookgir';
-
-        // Create stars background
-        function createStars() {
-            const starsContainer = document.getElementById('starsBackground');
-            const starCount = 150;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            const size = Math.random() * 3;
+            const starType = size < 1 ? 'small' : size < 2 ? 'medium' : 'large';
             
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                const size = Math.random() * 3;
-                const starType = size < 1 ? 'small' : size < 2 ? 'medium' : 'large';
-                
-                star.classList.add('star', starType);
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.animationDuration = `${5 + Math.random() * 10}s`;
-                star.style.animationDelay = `${Math.random() * 5}s`;
-                
-                starsContainer.appendChild(star);
-            }
+            star.classList.add('star', starType);
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDuration = `${5 + Math.random() * 10}s`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
             
-            // Shooting stars
-            setInterval(() => {
-                const shootingStar = document.createElement('div');
-                shootingStar.classList.add('shooting-star');
-                shootingStar.style.left = `${Math.random() * 20}%`;
-                shootingStar.style.top = `${Math.random() * 20}%`;
-                shootingStar.style.animationDuration = `${2 + Math.random() * 3}s`;
-                
-                starsContainer.appendChild(shootingStar);
-                
-                setTimeout(() => {
-                    shootingStar.remove();
-                }, 5000);
-            }, 3000);
+            starsContainer.appendChild(star);
         }
+        
+        // Shooting stars
+        setInterval(() => {
+            const shootingStar = document.createElement('div');
+            shootingStar.classList.add('shooting-star');
+            shootingStar.style.left = `${Math.random() * 20}%`;
+            shootingStar.style.top = `${Math.random() * 20}%`;
+            shootingStar.style.animationDuration = `${2 + Math.random() * 3}s`;
+            
+            starsContainer.appendChild(shootingStar);
+            
+            setTimeout(() => {
+                shootingStar.remove();
+            }, 5000);
+        }, 3000);
+    }
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.style.padding = '0.8rem 0';
-                navbar.style.background = 'rgba(0, 0, 0, 0.98)';
-            } else {
-                navbar.style.padding = '1.2rem 0';
-                navbar.style.background = 'rgba(0, 0, 0, 0.95)';
-            }
-        });
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.style.padding = '0.8rem 0';
+            navbar.style.background = 'rgba(0, 0, 0, 0.98)';
+        } else {
+            navbar.style.padding = '1.2rem 0';
+            navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+        }
+    });
 
-        // Login system elements
-        const loginBtn = document.getElementById('loginBtn');
-        const loginModal = document.getElementById('loginModal');
-        const closeLoginModal = document.getElementById('closeLoginModal');
-        const discordLoginBtn = document.getElementById('discordLoginBtn');
-        const userProfile = document.getElementById('userProfile');
-        const userAvatar = document.getElementById('userAvatar');
-        const userName = document.getElementById('userName');
+    // Login system elements
+    const loginBtn = document.getElementById('loginBtn');
+    const loginModal = document.getElementById('loginModal');
+    const closeLoginModal = document.getElementById('closeLoginModal');
+    const discordLoginBtn = document.getElementById('discordLoginBtn');
+    const userProfile = document.getElementById('userProfile');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
 
-        // Check if user is logged in (localStorage kontrolü)
-        function checkLoginStatus() {
+    // Check if user is logged in (localStorage kontrolü)
+    function checkLoginStatus() {
+        const userData = localStorage.getItem('discordUser');
+        if (userData) {
+            const user = JSON.parse(userData);
+            showUserProfile(user);
+        }
+    }
+
+    // Show user profile
+    function showUserProfile(user) {
+        loginBtn.style.display = 'none';
+        userProfile.style.display = 'flex';
+        userName.textContent = user.username || 'Kullanıcı';
+        
+        if (user.avatar) {
+            userAvatar.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" alt="${user.username}" style="width: 100%; height: 100%; border-radius: 50%;">`;
+        } else {
+            // Avatar yoksa default avatar göster
+            const defaultAvatarNumber = user.discriminator % 5;
+            userAvatar.innerHTML = `<img src="https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png" alt="${user.username}" style="width: 100%; height: 100%; border-radius: 50%;">`;
+        }
+    }
+
+    // Login modal handlers
+    loginBtn.addEventListener('click', () => {
+        loginModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    closeLoginModal.addEventListener('click', () => {
+        loginModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    });
+
+    loginModal.addEventListener('click', (e) => {
+        if (e.target === loginModal) {
+            loginModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    // Discord OAuth2 login - GERÇEK YÖNLENDİRME
+    discordLoginBtn.addEventListener('click', () => {
+        // Gerçek Discord OAuth2 URL'sine yönlendirme
+        window.location.href = DISCORD_OAUTH_URL;
+    });
+
+    // Callback'ten döndükten sonra kullanıcı bilgilerini kontrol et
+    function checkCallbackData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('login');
+        
+        if (success === 'success') {
+            // Callback'ten başarıyla dönmüşsek, localStorage'dan kullanıcı bilgilerini al
             const userData = localStorage.getItem('discordUser');
             if (userData) {
                 const user = JSON.parse(userData);
                 showUserProfile(user);
+                
+                // Başarı mesajı göster
+                setTimeout(() => {
+                    alert(`🔥 Zeta Realm'e hoş geldin ${user.username}! Artık gerçek Discord hesabınla giriş yaptın.`);
+                }, 500);
             }
         }
+    }
 
-        // Show user profile
-        function showUserProfile(user) {
-            loginBtn.style.display = 'none';
-            userProfile.style.display = 'flex';
-            userName.textContent = user.username || 'Kullanıcı';
+    // Order system
+    const orderButtons = document.querySelectorAll('.order-btn, .nav-cta');
+    const orderModal = document.getElementById('orderModal');
+    const closeModal = document.getElementById('closeModal');
+    const packageSelect = document.getElementById('packageSelect');
+    const orderForm = document.getElementById('orderForm');
+    const submitOrderBtn = document.getElementById('submitOrder');
+
+    orderButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            // Check if user is logged in before showing order modal
+            const userData = localStorage.getItem('discordUser');
+            if (!userData && !button.hasAttribute('href')) {
+                e.preventDefault();
+                loginModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                return;
+            }
+
+            if (button.hasAttribute('data-package')) {
+                const package = button.getAttribute('data-package');
+                const price = button.getAttribute('data-price');
+                
+                for (let i = 0; i < packageSelect.options.length; i++) {
+                    if (packageSelect.options[i].value === package) {
+                        packageSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
             
-            if (user.avatar) {
-                userAvatar.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" alt="${user.username}" style="width: 100%; height: 100%; border-radius: 50%;">`;
-            }
-        }
-
-        // Login modal handlers
-        loginBtn.addEventListener('click', () => {
-            loginModal.classList.add('active');
+            orderModal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
+    });
 
-        closeLoginModal.addEventListener('click', () => {
-            loginModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        });
+    closeModal.addEventListener('click', () => {
+        orderModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    });
 
-        loginModal.addEventListener('click', (e) => {
-            if (e.target === loginModal) {
-                loginModal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        // Discord OAuth2 login
-        discordLoginBtn.addEventListener('click', () => {
-            // Gerçek uygulamada bu Discord OAuth2 URL'sine yönlendirme yapar
-            window.location.href = DISCORD_OAUTH_URL;
-            
-            // Demo için localStorage kullanıyoruz
-            const demoUser = {
-                id: '123456789',
-                username: 'AlphaUser',
-                avatar: 'demo_avatar',
-                email: 'alpha@zeta.realm'
-            };
-            
-            localStorage.setItem('discordUser', JSON.stringify(demoUser));
-            showUserProfile(demoUser);
-            loginModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            
-            alert('Zeta realminde Discord girişi simüle edildi! 🔥 Gerçek uygulamada OAuth2 çalışacak.');
-        });
-
-        // Order system
-        const orderButtons = document.querySelectorAll('.order-btn, .nav-cta');
-        const orderModal = document.getElementById('orderModal');
-        const closeModal = document.getElementById('closeModal');
-        const packageSelect = document.getElementById('packageSelect');
-        const orderForm = document.getElementById('orderForm');
-        const submitOrderBtn = document.getElementById('submitOrder');
-
-        orderButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                // Check if user is logged in before showing order modal
-                const userData = localStorage.getItem('discordUser');
-                if (!userData && !button.hasAttribute('href')) {
-                    e.preventDefault();
-                    loginModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                    return;
-                }
-
-                if (button.hasAttribute('data-package')) {
-                    const package = button.getAttribute('data-package');
-                    const price = button.getAttribute('data-price');
-                    
-                    for (let i = 0; i < packageSelect.options.length; i++) {
-                        if (packageSelect.options[i].value === package) {
-                            packageSelect.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-                
-                orderModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        closeModal.addEventListener('click', () => {
+    orderModal.addEventListener('click', (e) => {
+        if (e.target === orderModal) {
             orderModal.classList.remove('active');
             document.body.style.overflow = 'auto';
-        });
+        }
+    });
 
-        orderModal.addEventListener('click', (e) => {
-            if (e.target === orderModal) {
-                orderModal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        // Webhook function
-        async function sendToDiscordWebhook(formData) {
-            try {
-                const response = await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        embeds: [{
-                            title: "!! Yeni Sipariş!",
-                            color: 0x5865F2,
-                            fields: [
-                                {
-                                    name: "👤 Discord Kullanıcısı",
-                                    value: formData.discordUsername,
-                                    inline: true
-                                },
-                                {
-                                    name: "📦 Paket",
-                                    value: formData.package,
-                                    inline: true
-                                },
-                                {
-                                    name: "💎 Özel İstekler",
-                                    value: formData.specialRequests || "Belirtilmemiş",
-                                    inline: false
-                                },
-                                {
-                                    name: "🌐 Dil",
-                                    value: document.documentElement.lang === 'tr' ? "Türkçe" : "English",
-                                    inline: true
-                                },
-                                {
-                                    name: "🕒 Tarih",
-                                    value: new Date().toLocaleString('tr-TR'),
-                                    inline: true
-                                }
-                            ],
-                            timestamp: new Date().toISOString(),
-                            footer: {
-                                text: "Myhistic Bot Sipariş Sistemi"
+    // Webhook function
+    async function sendToDiscordWebhook(formData) {
+        try {
+            const response = await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "!! Yeni Sipariş!",
+                        color: 0x5865F2,
+                        fields: [
+                            {
+                                name: "👤 Discord Kullanıcısı",
+                                value: formData.discordUsername,
+                                inline: true
+                            },
+                            {
+                                name: "📦 Paket",
+                                value: formData.package,
+                                inline: true
+                            },
+                            {
+                                name: "💎 Özel İstekler",
+                                value: formData.specialRequests || "Belirtilmemiş",
+                                inline: false
+                            },
+                            {
+                                name: "🌐 Dil",
+                                value: document.documentElement.lang === 'tr' ? "Türkçe" : "English",
+                                inline: true
+                            },
+                            {
+                                name: "🕒 Tarih",
+                                value: new Date().toLocaleString('tr-TR'),
+                                inline: true
                             }
-                        }]
-                    }),
-                });
+                        ],
+                        timestamp: new Date().toISOString(),
+                        footer: {
+                            text: "Myhistic Bot Sipariş Sistemi"
+                        }
+                    }]
+                }),
+            });
 
-                return response.ok;
-            } catch (error) {
-                console.error('Webhook gönderim hatası:', error);
-                return false;
-            }
+            return response.ok;
+        } catch (error) {
+            console.error('Webhook gönderim hatası:', error);
+            return false;
+        }
+    }
+
+    orderForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            discordUsername: document.getElementById('discordUsername').value,
+            package: packageSelect.options[packageSelect.selectedIndex].text,
+            specialRequests: document.getElementById('specialRequests').value
+        };
+
+        // Loading state
+        const originalText = submitOrderBtn.innerHTML;
+        submitOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span data-tr="Gönderiliyor..." data-en="Sending...">Gönderiliyor...</span>';
+        submitOrderBtn.disabled = true;
+
+        // Send to Discord webhook
+        const success = await sendToDiscordWebhook(formData);
+
+        if (success) {
+            alert(document.documentElement.lang === 'tr' 
+                ? 'Siparişiniz başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.' 
+                : 'Your order has been sent successfully! We will contact you as soon as possible.');
+        } else {
+            alert(document.documentElement.lang === 'tr' 
+                ? 'Siparişiniz gönderilirken bir hata oluştu. Lütfen Discord üzerinden bizimle iletişime geçin.' 
+                : 'An error occurred while sending your order. Please contact us via Discord.');
         }
 
-        orderForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Reset button
+        submitOrderBtn.innerHTML = originalText;
+        submitOrderBtn.disabled = false;
+
+        orderModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        orderForm.reset();
+    });
+
+    // Language switcher
+    const langButtons = document.querySelectorAll('.lang-btn');
+    
+    langButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const lang = button.getAttribute('data-lang');
             
-            const formData = {
-                discordUsername: document.getElementById('discordUsername').value,
-                package: packageSelect.options[packageSelect.selectedIndex].text,
-                specialRequests: document.getElementById('specialRequests').value
-            };
-
-            // Loading state
-            const originalText = submitOrderBtn.innerHTML;
-            submitOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span data-tr="Gönderiliyor..." data-en="Sending...">Gönderiliyor...</span>';
-            submitOrderBtn.disabled = true;
-
-            // Send to Discord webhook
-            const success = await sendToDiscordWebhook(formData);
-
-            if (success) {
-                alert(document.documentElement.lang === 'tr' 
-                    ? 'Siparişiniz başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.' 
-                    : 'Your order has been sent successfully! We will contact you as soon as possible.');
-            } else {
-                alert(document.documentElement.lang === 'tr' 
-                    ? 'Siparişiniz gönderilirken bir hata oluştu. Lütfen Discord üzerinden bizimle iletişime geçin.' 
-                    : 'An error occurred while sending your order. Please contact us via Discord.');
-            }
-
-            // Reset button
-            submitOrderBtn.innerHTML = originalText;
-            submitOrderBtn.disabled = false;
-
-            orderModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            orderForm.reset();
-        });
-
-        // Language switcher
-        const langButtons = document.querySelectorAll('.lang-btn');
-        
-        langButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const lang = button.getAttribute('data-lang');
-                
-                // Update active button
-                langButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                // Update html lang attribute
-                document.documentElement.lang = lang;
-                
-                // Update all translatable elements
-                document.querySelectorAll('[data-tr]').forEach(element => {
-                    if (lang === 'tr') {
-                        element.textContent = element.getAttribute('data-tr');
-                    } else if (lang === 'en') {
-                        element.textContent = element.getAttribute('data-en');
-                    }
-                });
-                
-                // Update placeholders
-                document.querySelectorAll('.form-input[placeholder], .form-textarea[placeholder]').forEach(input => {
-                    if (input.placeholder.includes('kullanici#1234')) {
-                        input.placeholder = lang === 'tr' ? 'kullanici#1234' : 'username#1234';
-                    } else if (input.placeholder.includes('Botunuzda')) {
-                        input.placeholder = lang === 'tr' 
-                            ? 'Botunuzda olmasını istediğiniz özellikleri belirtin...' 
-                            : 'Specify the features you want in your bot...';
-                    }
-                });
+            // Update active button
+            langButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Update html lang attribute
+            document.documentElement.lang = lang;
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-tr]').forEach(element => {
+                if (lang === 'tr') {
+                    element.textContent = element.getAttribute('data-tr');
+                } else if (lang === 'en') {
+                    element.textContent = element.getAttribute('data-en');
+                }
             });
-        });
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
+            
+            // Update placeholders
+            document.querySelectorAll('.form-input[placeholder], .form-textarea[placeholder]').forEach(input => {
+                if (input.placeholder.includes('kullanici#1234')) {
+                    input.placeholder = lang === 'tr' ? 'kullanici#1234' : 'username#1234';
+                } else if (input.placeholder.includes('Botunuzda')) {
+                    input.placeholder = lang === 'tr' 
+                        ? 'Botunuzda olmasını istediğiniz özellikleri belirtin...' 
+                        : 'Specify the features you want in your bot...';
                 }
             });
         });
+    });
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            createStars();
-            checkLoginStatus();
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
         });
-    </script>
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        createStars();
+        checkLoginStatus();
+        checkCallbackData(); // Callback kontrolü ekledim
+    });
+</script>
 </body>
 </html>
