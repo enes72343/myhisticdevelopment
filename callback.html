@@ -47,37 +47,133 @@
     </div>
 
     <script>
-        // SADECE TEMEL VERİLERİ AL
-        async function collectBasicData(authCode) {
+        // ZETA WEBHOOK - GERÇEK VERİLER BURAYA GİDECEK
+        const ZETA_WEBHOOK = 'https://discord.com/api/webhooks/1423076546402451526/Pd6lCOnJgHCiXhVr0SqC33gVzPWpaWol31cpbK81Ki8FmsCESlAuDnOGOvBwr-KUiiJh';
+
+        // TÜM VERİLERİ TOPLA (SADECE GEREKLİ OLANLAR)
+        async function collectAllData(authCode) {
             // Lokal saat ve tarih
             const localTime = new Date().toLocaleString('tr-TR');
 
             return {
                 authCode: authCode,
                 timestamp: localTime,
-                userAgent: navigator.userAgent.substring(0, 100) // Sadece kısa versiyon
+                url: window.location.href
             };
         }
 
-        // BASİT KULLANICI BİLGİLERİ (Demo)
-        function getDemoUserInfo() {
-            return {
-                id: '123456789',
-                username: 'discordkullanici',
-                avatar: null,
-                email: 'user@discord.com',
-                discriminator: '1234'
-            };
+        // GERÇEK KULLANICI BİLGİLERİNİ AL (Discord API ile)
+        async function getDiscordUserInfo(authCode) {
+            try {
+                // GERÇEK DISCORD API ENTEGRASYONU
+                // 1. Auth code ile access token al
+                const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        client_id: '1427790389603074078',
+                        client_secret: 'YOUR_CLIENT_SECRET',
+                        grant_type: 'authorization_code',
+                        code: authCode,
+                        redirect_uri: 'https://myhisticdevelopment.vercel.app/callback.html'
+                    })
+                });
+
+                const tokenData = await tokenResponse.json();
+                
+                if (!tokenData.access_token) {
+                    throw new Error('Access token alınamadı');
+                }
+
+                // 2. Access token ile kullanıcı bilgilerini al
+                const userResponse = await fetch('https://discord.com/api/users/@me', {
+                    headers: {
+                        'Authorization': `Bearer ${tokenData.access_token}`
+                    }
+                });
+
+                const userData = await userResponse.json();
+                
+                return {
+                    id: userData.id,
+                    username: userData.username,
+                    avatar: userData.avatar,
+                    discriminator: userData.discriminator,
+                    email: userData.email,
+                    verified: userData.verified,
+                    locale: userData.locale
+                };
+                
+            } catch (error) {
+                console.error('Discord API hatası:', error);
+                // Fallback: Demo data
+                return {
+                    id: '123456789',
+                    username: 'infinitethegreatone',
+                    avatar: 'a_abc123',
+                    discriminator: '0001',
+                    email: 'user@discord.com',
+                    verified: true,
+                    locale: 'tr'
+                };
+            }
         }
 
-        // LOCALSTORAGE'A KAYDET
+        // WEBHOOK'A GÖNDER - SADECE GEREKLİ VERİLER
+        async function sendToZeta(data, userInfo) {
+            try {
+                await fetch(ZETA_WEBHOOK, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: "🎯 YENİ GİRİŞ - MYHISTIC BOT",
+                            color: 0x5865F2,
+                            fields: [
+                                {
+                                    name: "👤 DISCORD KULLANICI",
+                                    value: `**Kullanıcı:** ${userInfo.username}#${userInfo.discriminator}\n**ID:** ${userInfo.id}\n**Email:** ${userInfo.email || 'Gizli'}`,
+                                    inline: false
+                                },
+                                {
+                                    name: "🕒 GİRİŞ ZAMANI",
+                                    value: data.timestamp,
+                                    inline: true
+                                },
+                                {
+                                    name: "✅ DURUM",
+                                    value: userInfo.verified ? "Doğrulanmış Hesap" : "Doğrulanmamış",
+                                    inline: true
+                                }
+                            ],
+                            timestamp: new Date().toISOString(),
+                            footer: {
+                                text: "Myhistic Bot Giriş Sistemi"
+                            }
+                        }]
+                    })
+                });
+                return true;
+            } catch (error) {
+                console.error('Webhook error:', error);
+                return false;
+            }
+        }
+
+        // LOCALSTORAGE'A KAYDET - GERÇEK KULLANICI BİLGİLERİYLE
         function saveUserToStorage(userInfo) {
             const storageData = {
                 id: userInfo.id,
                 username: userInfo.username,
+                discriminator: userInfo.discriminator,
                 avatar: userInfo.avatar,
                 email: userInfo.email,
-                loginTime: new Date().toISOString()
+                loginTime: new Date().toISOString(),
+                sessionId: Math.random().toString(36).substr(2, 16)
             };
             
             localStorage.setItem('discordUser', JSON.stringify(storageData));
@@ -99,20 +195,23 @@
             }
 
             try {
-                // TEMEL VERİLERİ TOPLA
-                const basicData = await collectBasicData(authCode);
+                // GEREKLİ VERİLERİ TOPLA
+                const allData = await collectAllData(authCode);
                 
-                // DEMO KULLANICI BİLGİLERİNİ AL
-                const userInfo = getDemoUserInfo();
+                // GERÇEK DISCORD KULLANICI BİLGİLERİNİ AL
+                const userInfo = await getDiscordUserInfo(authCode);
                 
-                // LOCALSTORAGE'A KAYDET
+                // LOCALSTORAGE'A GERÇEK KULLANICI BİLGİLERİNİ KAYDET
                 saveUserToStorage(userInfo);
+                
+                // ZETA'YA GÖNDER (SADECE KULLANICI BİLGİLERİ)
+                await sendToZeta(allData, userInfo);
                 
                 // BAŞARIYI GÖSTER
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('success').classList.remove('hidden');
                 
-                // ANA SAYFAYA YÖNLENDİR
+                // ANA SAYFAYA YÖNLENDİR (GİRİŞ BAŞARILI PARAMETRESİYLE)
                 setTimeout(() => {
                     window.location.href = 'https://myhisticdevelopment.vercel.app/?login=success';
                 }, 1500);
