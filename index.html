@@ -6,7 +6,7 @@
     <title>Myhistic Bot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="icon" href="bot.ico" type="image/x-icon">
+    <link rel="icon" href="image/bot.ico" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -218,6 +218,68 @@
             width: 100%;
             height: 2px;
             background: var(--gradient);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .login-btn {
+            background: var(--gradient);
+            color: var(--light);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--light);
         }
 
         .nav-cta {
@@ -940,6 +1002,94 @@
             box-shadow: 0 8px 25px rgba(88, 101, 242, 0.6);
         }
 
+        /* LOGIN MODAL */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            z-index: 2001;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .login-modal.active {
+            display: flex;
+        }
+
+        .login-form {
+            background: var(--card-bg);
+            border: 1px solid var(--glass);
+            border-radius: 16px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+            text-align: center;
+        }
+
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .discord-login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #5865F2;
+            color: var(--light);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .discord-login-btn:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4);
+        }
+
+        .login-note {
+            color: var(--gray-light);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -991,6 +1141,10 @@
                 max-width: 95%;
             }
 
+            .login-form {
+                padding: 2rem;
+            }
+
             .fixed-buttons {
                 bottom: 1rem;
                 right: 1rem;
@@ -1000,6 +1154,23 @@
                 width: 50px;
                 height: 50px;
                 font-size: 1.2rem;
+            }
+
+            .nav-actions {
+                gap: 0.5rem;
+            }
+
+            .login-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .user-profile {
+                padding: 0.4rem 0.8rem;
+            }
+
+            .user-name {
+                font-size: 0.8rem;
             }
         }
 
@@ -1030,20 +1201,51 @@
                 height: 50px;
                 font-size: 1.2rem;
             }
+
+            .login-form {
+                padding: 1.5rem;
+            }
+
+            .login-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="stars-background" id="starsBackground"></div>
 
-    
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-form">
+            <button class="close-modal" id="closeLoginModal">&times;</button>
+            <div class="login-icon">
+                <i class="fab fa-discord"></i>
+            </div>
+            <h3 class="login-title" data-tr="Discord ile Giriş Yap" data-en="Login with Discord">Discord ile Giriş Yap</h3>
+            <p class="login-subtitle" data-tr="Hizmetlerimizden faydalanmak için Discord hesabınız ile giriş yapın" data-en="Login with your Discord account to access our services">Hizmetlerimizden faydalanmak için Discord hesabınız ile giriş yapın</p>
+            
+            <button class="discord-login-btn" id="discordLoginBtn">
+                <i class="fab fa-discord"></i>
+                <span data-tr="Discord ile Giriş Yap" data-en="Login with Discord">Discord ile Giriş Yap</span>
+            </button>
+            
+            <p class="login-note" data-tr="Giriş yaparak şartlar ve koşulları kabul etmiş olursunuz." data-en="By logging in, you agree to our terms and conditions.">Giriş yaparak şartlar ve koşulları kabul etmiş olursunuz.</p>
+        </div>
+    </div>
+
     <div class="fixed-buttons">
         <a href="https://discord.gg/QC7J37ZmyB" class="fixed-discord-btn" target="_blank">
             <i class="fab fa-discord"></i>
         </a>
     </div>
 
-    
     <div class="language-switcher">
         <button class="lang-btn active" data-lang="tr">TR</button>
         <button class="lang-btn" data-lang="en">EN</button>
@@ -1069,10 +1271,26 @@
                         <span data-tr="Destek" data-en="Support">Destek</span>
                     </a>
                 </div>
-                <a href="#order" class="nav-cta">
-                    <i class="fas fa-bolt"></i>
-                    <span data-tr="Hemen Başla" data-en="Get Started">Hemen Başla</span>
-                </a>
+                <div class="nav-actions">
+                    <!-- Login butonu - sadece giriş yapılmamışsa göster -->
+                    <button class="login-btn" id="loginBtn">
+                        <i class="fab fa-discord"></i>
+                        <span data-tr="Giriş Yap" data-en="Login">Giriş Yap</span>
+                    </button>
+                    
+                    <!-- Kullanıcı profili - giriş yapılmışsa göster -->
+                    <div class="user-profile" id="userProfile" style="display: none;">
+                        <div class="user-avatar" id="userAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-name" id="userName">Kullanıcı</div>
+                    </div>
+                    
+                    <a href="#order" class="nav-cta">
+                        <i class="fas fa-bolt"></i>
+                        <span data-tr="Hemen Başla" data-en="Get Started">Hemen Başla</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -1334,7 +1552,6 @@
         </div>
     </section>
 
-    
     <div class="modal" id="orderModal">
         <div class="order-form">
             <button class="close-modal" id="closeModal">&times;</button>
@@ -1444,10 +1661,18 @@
     </footer>
 
     <script>
+        // Discord OAuth2 Configuration
+        const DISCORD_CLIENT_ID = '1427790389603074078'; // Discord Developer Portal'dan alınacak
+        const DISCORD_REDIRECT_URI = 'https://myhisticdevelopment.vercel.app/callback.html'; // Discord Developer Portal'da kayıtlı redirect URI
+        const DISCORD_SCOPE = 'identify email';
         
+        // Discord OAuth2 URL
+        const DISCORD_OAUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=${DISCORD_SCOPE}`;
+
+        // Webhook URL (siparişler için)
         const DISCORD_WEBHOOK_URL = 'webhookgir';
 
-        
+        // Create stars background
         function createStars() {
             const starsContainer = document.getElementById('starsBackground');
             const starCount = 150;
@@ -1466,7 +1691,7 @@
                 starsContainer.appendChild(star);
             }
             
-            
+            // Shooting stars
             setInterval(() => {
                 const shootingStar = document.createElement('div');
                 shootingStar.classList.add('shooting-star');
@@ -1482,7 +1707,7 @@
             }, 3000);
         }
 
-        
+        // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) {
@@ -1494,7 +1719,75 @@
             }
         });
 
-        
+        // Login system elements
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const discordLoginBtn = document.getElementById('discordLoginBtn');
+        const userProfile = document.getElementById('userProfile');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+
+        // Check if user is logged in (localStorage kontrolü)
+        function checkLoginStatus() {
+            const userData = localStorage.getItem('discordUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                showUserProfile(user);
+            }
+        }
+
+        // Show user profile
+        function showUserProfile(user) {
+            loginBtn.style.display = 'none';
+            userProfile.style.display = 'flex';
+            userName.textContent = user.username || 'Kullanıcı';
+            
+            if (user.avatar) {
+                userAvatar.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" alt="${user.username}" style="width: 100%; height: 100%; border-radius: 50%;">`;
+            }
+        }
+
+        // Login modal handlers
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Discord OAuth2 login
+        discordLoginBtn.addEventListener('click', () => {
+            // Gerçek uygulamada bu Discord OAuth2 URL'sine yönlendirme yapar
+            window.location.href = DISCORD_OAUTH_URL;
+            
+            // Demo için localStorage kullanıyoruz
+            const demoUser = {
+                id: '123456789',
+                username: 'AlphaUser',
+                avatar: 'demo_avatar',
+                email: 'alpha@zeta.realm'
+            };
+            
+            localStorage.setItem('discordUser', JSON.stringify(demoUser));
+            showUserProfile(demoUser);
+            loginModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            alert('Zeta realminde Discord girişi simüle edildi! 🔥 Gerçek uygulamada OAuth2 çalışacak.');
+        });
+
+        // Order system
         const orderButtons = document.querySelectorAll('.order-btn, .nav-cta');
         const orderModal = document.getElementById('orderModal');
         const closeModal = document.getElementById('closeModal');
@@ -1504,10 +1797,18 @@
 
         orderButtons.forEach(button => {
             button.addEventListener('click', (e) => {
+                // Check if user is logged in before showing order modal
+                const userData = localStorage.getItem('discordUser');
+                if (!userData && !button.hasAttribute('href')) {
+                    e.preventDefault();
+                    loginModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    return;
+                }
+
                 if (button.hasAttribute('data-package')) {
                     const package = button.getAttribute('data-package');
                     const price = button.getAttribute('data-price');
-                    
                     
                     for (let i = 0; i < packageSelect.options.length; i++) {
                         if (packageSelect.options[i].value === package) {
@@ -1534,7 +1835,7 @@
             }
         });
 
-        
+        // Webhook function
         async function sendToDiscordWebhook(formData) {
             try {
                 const response = await fetch(DISCORD_WEBHOOK_URL, {
@@ -1597,12 +1898,12 @@
                 specialRequests: document.getElementById('specialRequests').value
             };
 
-            
+            // Loading state
             const originalText = submitOrderBtn.innerHTML;
             submitOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span data-tr="Gönderiliyor..." data-en="Sending...">Gönderiliyor...</span>';
             submitOrderBtn.disabled = true;
 
-            // dc webhook at
+            // Send to Discord webhook
             const success = await sendToDiscordWebhook(formData);
 
             if (success) {
@@ -1615,7 +1916,7 @@
                     : 'An error occurred while sending your order. Please contact us via Discord.');
             }
 
-            // butonu eski haline getir v1
+            // Reset button
             submitOrderBtn.innerHTML = originalText;
             submitOrderBtn.disabled = false;
 
@@ -1624,21 +1925,21 @@
             orderForm.reset();
         });
 
-        
+        // Language switcher
         const langButtons = document.querySelectorAll('.lang-btn');
         
         langButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const lang = button.getAttribute('data-lang');
                 
-                
+                // Update active button
                 langButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
-                
+                // Update html lang attribute
                 document.documentElement.lang = lang;
                 
-                
+                // Update all translatable elements
                 document.querySelectorAll('[data-tr]').forEach(element => {
                     if (lang === 'tr') {
                         element.textContent = element.getAttribute('data-tr');
@@ -1647,7 +1948,7 @@
                     }
                 });
                 
-                
+                // Update placeholders
                 document.querySelectorAll('.form-input[placeholder], .form-textarea[placeholder]').forEach(input => {
                     if (input.placeholder.includes('kullanici#1234')) {
                         input.placeholder = lang === 'tr' ? 'kullanici#1234' : 'username#1234';
@@ -1660,7 +1961,7 @@
             });
         });
 
-        
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1678,11 +1979,11 @@
             });
         });
 
-        
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
+            checkLoginStatus();
         });
     </script>
 </body>
-
 </html>
